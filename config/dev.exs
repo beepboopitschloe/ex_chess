@@ -13,6 +13,15 @@ config :ex_chess, ExChess.Web.Endpoint,
   check_origin: false,
   watchers: []
 
+config :guardian, Guardian,
+  allowed_algos: ["HS512"],
+  issuer: "ExChess",
+  ttl: {14, :days},
+  allowed_drift: 2000,
+  verify_issuer: true,
+  secret_key: "7Cn5pcnBsnk8PQQ+6xthfcmGoMLYM4M/4OnKNZlwztWfad+5Sz9cdJsgVZERdRYl",
+  serializer: ExChess.Accounts.GuardianSerializer
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed

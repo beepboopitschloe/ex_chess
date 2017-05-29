@@ -3,17 +3,18 @@ defmodule ExChess.Web.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug Guardian.Plug.VerifyHeader
   end
 
   scope "/api", ExChess.Web do
     pipe_through :api
 
-    get "/user/:user", UserController, :show
+    get "/user/:id", UserController, :show
+    get "/identity", UserController, :identity
+
+    post "/auth/signup", AuthController, :signup
+    post "/auth/login", AuthController, :login
+
     resources "/game", GameController, except: [:new, :edit]
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", ExChess.Web do
-  #   pipe_through :api
-  # end
 end

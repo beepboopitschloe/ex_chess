@@ -4,25 +4,19 @@ defmodule ExChess.Web.UserController do
   alias ExChess.Accounts
   alias ExChess.Accounts.User
 
+  plug Guardian.Plug.EnsureAuthenticated
+  plug Guardian.Plug.LoadResource
+  plug Guardian.Plug.EnsureResource
+
   action_fallback ExChess.Web.FallbackController
-
-  def index(conn, _params) do
-    users = Accounts.list_users()
-    render(conn, "index.json", users: users)
-  end
-
-  def create(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", user_path(conn, :show, user))
-      |> render("show.json", user: user)
-    end
-  end
 
   def show(conn, %{"id" => id}) do
     user = Accounts.get_user!(id)
     render(conn, "show.json", user: user)
+  end
+
+  def identity(conn, _) do
+    render(conn, "show.json", user: Guardian.Plug.current_resource(conn))
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do

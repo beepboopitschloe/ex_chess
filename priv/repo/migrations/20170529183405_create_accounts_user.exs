@@ -10,5 +10,6 @@ defmodule ExChess.Repo.Migrations.CreateExChess.Accounts.User do
       timestamps()
     end
 
+    create unique_index(:accounts_users, :username)
   end
 end

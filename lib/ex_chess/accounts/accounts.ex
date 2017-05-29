@@ -22,6 +22,23 @@ defmodule ExChess.Accounts do
   end
 
   @doc """
+  Validate a username/password combination.
+  """
+  def check_login username, password do
+    case Repo.one(from u in User, where: u.username == ^username) do
+      nil ->
+	Comeonin.Bcrypt.dummy_checkpw
+	nil
+
+      %User{password: stored_hash} = user ->
+	case Comeonin.Bcrypt.checkpw(password, stored_hash) do
+	  true -> user
+	  false -> nil
+	end
+    end
+  end
+
+  @doc """
   Gets a single user.
 
   Raises `Ecto.NoResultsError` if the User does not exist.
@@ -49,11 +66,13 @@ defmodule ExChess.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_user(attrs \\ %{}) do
+  def create_user(username, password) do
     %User{}
-    |> User.changeset(attrs)
+    |> User.changeset(%{username: username, password: hash_pw(password)})
     |> Repo.insert()
   end
+
+  defp hash_pw(password), do: Comeonin.Bcrypt.hashpwsalt(password)
 
   @doc """
   Updates a user.
