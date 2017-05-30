@@ -66,9 +66,14 @@ defmodule ExChess.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_user(username, password) do
+  def create_user(%{username: username, password: password}) do
+    password = case password do
+		 nil -> nil # a nil password will result in a nice changeset error
+		 p -> hash_pw(p)
+	       end
+
     %User{}
-    |> User.changeset(%{username: username, password: hash_pw(password)})
+    |> User.changeset(%{username: username, password: password})
     |> Repo.insert()
   end
 

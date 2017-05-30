@@ -17,3 +17,12 @@ config :ex_chess, ExChess.Repo,
   database: "ex_chess_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :guardian, Guardian,
+  allowed_algos: ["HS512"],
+  issuer: "ExChessTest",
+  ttl: {14, :days},
+  allowed_drift: 2000,
+  verify_issuer: true,
+  secret_key: "ldklkdjdldjkdlkjdlakjlakjalkja",
+  serializer: ExChess.Accounts.GuardianSerializer

@@ -7,10 +7,10 @@ defmodule ExChess.Games.Game do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "games_games" do
-    field :moves, {:array, :string}
+    field :moves, {:array, :string}, default: []
     has_one :player_one, ExChess.Accounts.User
     has_one :player_two, ExChess.Accounts.User
-    field :status, :string
+    field :status, :string, default: "waiting"
 
     timestamps()
   end
@@ -18,7 +18,9 @@ defmodule ExChess.Games.Game do
   @doc false
   def changeset(%Game{} = game, attrs) do
     game
-    |> cast(attrs, [:player_one, :player_two, :status, :moves])
+    |> cast(attrs, [:status, :moves])
+    |> cast_assoc(:player_one)
+    |> cast_assoc(:player_two)
     |> validate_required([:player_one, :player_two, :status, :moves])
   end
 end

@@ -31,7 +31,7 @@ defmodule ExChess.AccountsTest do
 
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
-      assert user.password == "some password"
+      assert user.password != "some password"
       assert user.username == "some username"
     end
 
