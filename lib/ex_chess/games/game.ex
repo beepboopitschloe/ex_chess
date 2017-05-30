@@ -8,19 +8,17 @@ defmodule ExChess.Games.Game do
   @foreign_key_type :binary_id
   schema "games_games" do
     field :moves, {:array, :string}, default: []
-    has_one :player_one, ExChess.Accounts.User
-    has_one :player_two, ExChess.Accounts.User
+    belongs_to :player_one, ExChess.Accounts.User
+    belongs_to :player_two, ExChess.Accounts.User
     field :status, :string, default: "waiting"
 
     timestamps()
   end
 
   @doc false
-  def changeset(%Game{} = game, attrs) do
+  def changeset(%Game{} = game, attrs \\ %{}) do
     game
     |> cast(attrs, [:status, :moves])
-    |> cast_assoc(:player_one)
-    |> cast_assoc(:player_two)
-    |> validate_required([:player_one, :player_two, :status, :moves])
+    |> validate_required([:player_one, :status, :moves])
   end
 end

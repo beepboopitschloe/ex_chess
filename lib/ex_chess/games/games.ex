@@ -18,7 +18,13 @@ defmodule ExChess.Games do
 
   """
   def list_games do
-    Repo.all(Game)
+    Repo.all(from Game, preload: [:player_one, :player_two])
+  end
+
+  def list_games_by_status status do
+    Repo.all(from g in Game,
+      where: g.status == ^status,
+      preload: [:player_one, :player_two])
   end
 
   @doc """
@@ -42,17 +48,21 @@ defmodule ExChess.Games do
 
   ## Examples
 
-      iex> create_game(%{field: value})
-      {:ok, %Game{}}
+      iex> create_game(%User{})
+      {:ok, %Game{player_one: %User{}}}
 
       iex> create_game(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_game(attrs \\ %{}) do
-    %Game{}
-    |> Game.changeset(attrs)
-    |> Repo.insert()
+  def create_game(%ExChess.Accounts.User{id: player_one_id}) do
+    %Game{player_one_id: player_one_id}
+    |> Repo.preload(:player_one)
+    |> Game.changeset
+    |> Repo.insert
+  end
+  def create_game(_) do
+    {:error, Game.changeset(%Game{})}
   end
 
   @doc """

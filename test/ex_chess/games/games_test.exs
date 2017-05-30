@@ -8,7 +8,6 @@ defmodule ExChess.GamesTest do
   describe "games" do
     alias ExChess.Games.Game
 
-    @valid_attrs %{moves: [], status: "waiting"}
     @update_attrs %{moves: [], status: "playing"}
     @invalid_attrs %{moves: nil, status: nil}
 
@@ -21,7 +20,12 @@ defmodule ExChess.GamesTest do
     end
 
     test "list_games_by_status/1 returns games filtered by status" do
-      raise "not implemented"
+      insert(:game, status: "waiting")
+      playing = insert(:game, status: "playing")
+
+      games = Games.list_games_by_status("playing")
+      assert length(games) == 1
+      assert Enum.at(games, 0).id == playing.id
     end
 
     test "get_game!/1 returns the game with given id" do
@@ -30,7 +34,9 @@ defmodule ExChess.GamesTest do
     end
 
     test "create_game/1 with valid data creates a game" do
-      raise "not implemented"
+      player = insert(:user)
+      {:ok, game} = Games.create_game(player)
+      assert game.player_one == player
     end
 
     test "create_game/1 with invalid data returns error changeset" do

@@ -1,20 +1,10 @@
 defmodule ExChess.Web.UserControllerTest do
   use ExChess.Web.ConnCase
 
-  alias ExChess.Accounts
-  alias ExChess.Accounts.User
-
-  @create_attrs %{password: "some password", username: "some username"}
-  @update_attrs %{password: "some updated password", username: "some updated username"}
-  @invalid_attrs %{password: nil, username: nil}
-
-  def fixture(:user) do
-    {:ok, user} = Accounts.create_user(@create_attrs)
-    user
-  end
+  import ExChess.Factory
 
   setup %{conn: conn} do
-    user = fixture(:user)
+    user = insert(:user)
     {:ok, jwt, _} = Guardian.encode_and_sign(user)
 
     conn = conn

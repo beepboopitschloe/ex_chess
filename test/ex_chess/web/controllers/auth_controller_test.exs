@@ -26,5 +26,8 @@ defmodule ExChess.Web.AuthControllerTest do
     assert %{"identity" => identity,
 	     "jwt" => jwt} = json_response(conn, 200)["data"]
     assert identity["id"] == user.id
+
+    {:ok, %{"sub" => "User:" <> id}} = Guardian.decode_and_verify(jwt)
+    assert id == user.id
   end
 end
