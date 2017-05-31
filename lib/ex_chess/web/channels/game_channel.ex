@@ -1,11 +1,27 @@
 defmodule ExChess.Web.GameChannel do
   use ExChess.Web, :channel
 
-  def join("game:lobby", payload, socket) do
-    if authorized?(payload) do
-      {:ok, socket}
+  alias ExChess.Accounts.GuardianSerializer
+  alias ExChess.Games
+  alias ExChess.Web.GameView
+  alias ExChess.Games.Game
+
+  def join("game:" <> game_id, %{ "jwt" => jwt }, socket) do
+    with {:ok, token} <- Guardian.decode_and_verify(jwt),
+	 {:ok, user} <- GuardianSerializer.from_token(token["sub"]) do
+
+      game = Games.get_game!(game_id)
+
+      case Games.player_join(game, user) do
+	{:ok, game} ->
+	  socket = assign(socket, :user, user)
+	  socket = assign(socket, :game, game)
+	  {:ok, GameView.render("game.json", game: game), socket}
+
+	{:error, reason} -> {:error, reason}
+      end
     else
-      {:error, %{reason: "unauthorized"}}
+      _ -> {:error, "invalid token"}
     end
   end
 
@@ -23,7 +39,7 @@ defmodule ExChess.Web.GameChannel do
   end
 
   # Add authorization logic here as required.
-  defp authorized?(_payload) do
-    true
+  defp authorized?(%{jwt: jwt}) do
+    Guardian.decode_and_verify(jwt)
   end
 end
