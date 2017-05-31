@@ -38,6 +38,7 @@ defmodule ExChess.Mixfile do
      {:cowboy, "~> 1.0"},
      {:guardian, "~> 0.14.2"},
      {:comeonin, "~> 3.0.2"},
+     {:cors_plug, "~> 1.1"},
      {:ex_machina, "~> 2.0", only: :test}]
   end
 

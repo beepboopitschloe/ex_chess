@@ -17,6 +17,7 @@ defmodule ExChess.Accounts.User do
   def changeset(%User{} = user, attrs) do
     user
     |> cast(attrs, [:username, :password])
+    |> unique_constraint(:username)
     |> validate_required([:username, :password])
   end
 end

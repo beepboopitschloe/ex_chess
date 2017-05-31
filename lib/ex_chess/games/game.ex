@@ -18,7 +18,7 @@ defmodule ExChess.Games.Game do
   @doc false
   def changeset(%Game{} = game, attrs \\ %{}) do
     game
-    |> cast(attrs, [:status, :moves])
+    |> cast(attrs, [:status, :moves, :player_one_id, :player_two_id])
     |> validate_required([:player_one, :status, :moves])
   end
 end

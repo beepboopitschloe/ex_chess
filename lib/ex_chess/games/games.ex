@@ -7,6 +7,7 @@ defmodule ExChess.Games do
   alias ExChess.Repo
 
   alias ExChess.Games.Game
+  alias ExChess.Accounts.User
 
   @doc """
   Returns the list of games.
@@ -41,7 +42,7 @@ defmodule ExChess.Games do
       ** (Ecto.NoResultsError)
 
   """
-  def get_game!(id), do: Repo.get!(Game, id)
+  def get_game!(id), do: Repo.get!(Game, id) |> Repo.preload([:player_one, :player_two])
 
   @doc """
   Creates a game.
@@ -81,6 +82,25 @@ defmodule ExChess.Games do
     game
     |> Game.changeset(attrs)
     |> Repo.update()
+  end
+
+  @doc """
+  Attempt to add a player to the game.
+  """
+  def player_join(%Game{} = game, %User{id: player_id}) do
+    case game do
+      %Game{player_one: %{id: ^player_id}} ->
+	{:ok, game}
+
+      %Game{player_two: %{id: ^player_id}} ->
+	{:ok, game}
+
+      %Game{player_two: nil} ->
+	update_game(game, %{player_two_id: player_id,
+			    status: "playing"})
+
+      _ -> {:error, :game_full}
+    end
   end
 
   @doc """
