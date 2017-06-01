@@ -49,9 +49,9 @@ defmodule ExChess.Web.GameChannel do
     end
   end
 
-  def handle_in("game_updated", g, socket) do
-    IO.puts "game updated: #{inspect g}"
-    {:noreply, socket}
+  def handle_in("get_status", _, socket) do
+    %{assigns: %{game_id: game_id}} = socket
+    {:reply, {:ok, Games.get_game!(game_id)}, socket}
   end
 
   defp reply_game(socket, game) do
