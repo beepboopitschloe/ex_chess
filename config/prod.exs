@@ -3,6 +3,7 @@ use Mix.Config
 config :ex_chess, ExChess.Web.Endpoint,
   on_init: {ExChess.Web.Endpoint, :load_from_system_env, []},
   url: [host: "intense-lake-14088.herokuapp.com", port: 443],
+  check_origin: ["https://diplomat-robert-25142.netlify.com"],
   force_ssl: [rewrite_on: [:x_forwarded_proto]]
 
 config :ex_chess, ExChess.Repo,

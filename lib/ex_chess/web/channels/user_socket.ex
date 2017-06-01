@@ -6,9 +6,7 @@ defmodule ExChess.Web.UserSocket do
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket,
-    timeout: 45_000,
-    check_origin: ["https://diplomat-robert-25142.netlify.com",
-		   "//localhost:4321"]
+    timeout: 45_000
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
