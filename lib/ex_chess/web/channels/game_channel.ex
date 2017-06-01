@@ -21,7 +21,9 @@ defmodule ExChess.Web.GameChannel do
 	  send(self(), :after_join)
 	  {:ok, show_game(game), socket}
 
-	{:error, reason} -> {:ok, show_game(game), socket}
+	{:error, :game_full} -> {:ok, show_game(game), socket}
+
+	{:error, reason} -> {:error, reason, socket}
       end
     else
       _ -> {:error, "invalid token"}

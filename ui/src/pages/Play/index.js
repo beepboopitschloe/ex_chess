@@ -37,6 +37,17 @@ export default {
   },
 
   computed: {
+    userIsPlaying() {
+      if (!this.currentGame || this.currentGame.status !== 'playing') {
+        return false
+      }
+
+      const { playerOne, playerTwo } = this.currentGame
+      const { id } = this.identity
+
+      return id === playerOne.id || id === playerTwo.id
+    },
+
     opponent() {
       if (!this.currentGame || this.currentGame.status !== 'playing') {
         return null
@@ -51,18 +62,19 @@ export default {
       }
     },
 
-    isMyTurn() {
+    activePlayer() {
       if (!this.currentGame || this.currentGame.status !== 'playing') {
-        return false
+        return null
       }
 
       const { playerOne, playerTwo, playerOneTurn } = this.currentGame
 
-      switch(this.identity.id) {
-        case playerOne.id: return playerOneTurn
-        case playerTwo.id: return !playerOneTurn
-        default: return false
-      }
+      return playerOneTurn ? playerOne : playerTwo
+    },
+
+    isMyTurn() {
+      const p = this.activePlayer
+      return p && p.id === this.identity.id
     },
 
     ...mapGetters(['currentGame', 'identity'])
@@ -84,7 +96,7 @@ export default {
         <h3>playing against {this.opponent.username}</h3>
         <h4>moves:</h4>
         {renderMoves(h, this.currentGame)}
-        {renderMoveInput(h, this.isMyTurn, this.opponent, this.setPendingMove, this.sendPendingMove)}
+        {renderMoveInput(h, this)}
       </div>
     )
   }
@@ -121,9 +133,9 @@ function renderMoves(h, { moves, playerOne, playerTwo }) {
   )
 }
 
-function renderMoveInput(h, isMyTurn, opponent, setPendingMove, sendPendingMove) {
-  if (!isMyTurn) {
-    return <p>waiting for {opponent.username} to move...</p>
+function renderMoveInput(h, { activePlayer, userIsPlaying, isMyTurn, setPendingMove, sendPendingMove }) {
+  if (!userIsPlaying || !isMyTurn) {
+    return <p>waiting for {activePlayer.username} to move...</p>
   }
 
   return (
