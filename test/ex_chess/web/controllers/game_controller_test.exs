@@ -35,7 +35,8 @@ defmodule ExChess.Web.GameControllerTest do
     created = json_response(conn, 201)["data"]
     assert created["status"] == "waiting"
     assert created["moves"] == []
-    assert created["player_one"]["id"] == user.id
-    assert created["player_two"] == nil
+    assert created["playerOne"]["id"] == user.id
+    assert created["playerOneTurn"] == true
+    assert created["playerTwo"] == nil
   end
 end

@@ -10,24 +10,33 @@ defmodule ExChess.Web.GameChannel do
 
   def join("game:" <> game_id, %{ "jwt" => jwt }, socket) do
     with {:ok, token} <- Guardian.decode_and_verify(jwt),
-	 {:ok, user} <- GuardianSerializer.from_token(token["sub"]) do
+         {:ok, user} <- GuardianSerializer.from_token(token["sub"]),
+         game when game != nil <- Games.get_game(game_id) do
 
-      game = Games.get_game!(game_id)
+      socket = socket
+      |> assign(:user, user)
+      |> assign(:game_id, game_id)
 
       case Games.player_join(game, user) do
-	{:ok, game} ->
-	  socket = assign(socket, :user, user)
-	  socket = assign(socket, :game_id, game_id)
-	  send(self(), :after_join)
-	  {:ok, show_game(game), socket}
+        {:ok, game} ->
+          send(self(), :after_join)
+          {:ok, show_game(game), socket}
 
-	{:error, :game_full} -> {:ok, show_game(game), socket}
+        {:error, :game_full} -> {:ok, show_game(game), socket}
 
-	{:error, reason} -> {:error, reason, socket}
+        {:error, reason} -> {:error, reason, socket}
+
+        x ->
+          Logger.error "unexpected error joining game: #{inspect x}"
+          {:error, :server_error, socket}
       end
     else
-      _ -> {:error, "invalid token"}
+      nil -> {:error, :game_not_found}
+      _ -> {:error, :invalid_token}
     end
+  end
+  def join("game:" <> _game_id, _, socket) do
+    {:error, :missing_token}
   end
 
   def handle_info(:after_join, socket) do
@@ -46,19 +55,20 @@ defmodule ExChess.Web.GameChannel do
       {:error, reason} when is_atom(reason) -> reply_error(socket, reason)
 
       {:error, changeset} ->
-	Logger.error "error adding move: #{inspect changeset}"
-	reply_error(socket, :server_error)
+        Logger.error "error adding move: #{inspect changeset}"
+        reply_error(socket, :server_error)
     end
   end
 
   def handle_in("get_status", _, socket) do
     %{assigns: %{game_id: game_id}} = socket
-    {:reply, {:ok, Games.get_game!(game_id)}, socket}
+    game = Games.get_game!(game_id)
+    reply_game(socket, game)
   end
 
   defp reply_game(socket, game) do
     broadcast_game!(socket, game)
-    {:reply, {:ok, %{game: show_game(game)}}, socket}
+    {:reply, {:ok, show_game(game)}, socket}
   end
 
   defp reply_error(socket, reason), do: {:reply, {:error, %{reason: reason}}, socket}

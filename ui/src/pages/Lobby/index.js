@@ -27,7 +27,7 @@ export default {
       }
 
       if (this.availableGames.length === 0) {
-        return <p>no active games</p>
+        return <p>no open games. why not start a new one?</p>
       }
 
       const list = this.availableGames.map(game => (

@@ -45,6 +45,11 @@ defmodule ExChess.Games do
   def get_game!(id), do: Repo.get!(Game, id) |> Repo.preload([:player_one, :player_two])
 
   @doc """
+  Get a game without raising errors.
+  """
+  def get_game(id), do: Repo.get(Game, id) |> Repo.preload([:player_one, :player_two])
+
+  @doc """
   Creates a game.
 
   ## Examples

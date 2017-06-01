@@ -62,7 +62,7 @@ export function sendMove({ commit, getters }, move) {
 
   return new Promise((resolve, reject) => {
     channel.push('send_move', { move })
-      .receive('ok', ({ game }) => {
+      .receive('ok', game => {
         commit('setCurrentGame', game)
         return resolve(game)
       })
