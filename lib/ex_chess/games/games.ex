@@ -85,21 +85,65 @@ defmodule ExChess.Games do
   end
 
   @doc """
-  Attempt to add a player to the game.
+  Add a player to the game.
   """
-  def player_join(%Game{} = game, %User{id: player_id}) do
+  def player_join(%Game{} = game, %User{} = player) do
+    with {:ok, game} <- update_with_player(game, player) do
+      case game do
+	%Game{player_one_present: true,
+	  player_two_present: true} ->
+	  update_game(game, %{status: "playing"})
+
+	game -> {:ok, game}
+      end
+    end
+  end
+
+  defp update_with_player(%Game{} = game, %User{id: player_id}) do
     case game do
       %Game{player_one: %{id: ^player_id}} ->
-	{:ok, game}
+	update_game(game, %{player_one_present: true})
 
       %Game{player_two: %{id: ^player_id}} ->
-	{:ok, game}
+	update_game(game, %{player_two_present: true})
 
       %Game{player_two: nil} ->
 	update_game(game, %{player_two_id: player_id,
-			    status: "playing"})
+			    player_two_present: true})
 
       _ -> {:error, :game_full}
+    end
+  end
+
+  @doc """
+  Append a move as the given player.
+  """
+  def player_make_move(%Game{} = game, %User{id: player_id} = player, move) when is_binary(move) do
+    case game do
+      %Game{player_one: %{id: ^player_id}, player_one_turn: true} ->
+	update_game(game, %{moves: game.moves ++ [move],
+			    player_one_turn: false})
+
+      %Game{player_two: %{id: ^player_id}, player_one_turn: false} ->
+	update_game(game, %{moves: game.moves ++ [move],
+			    player_one_turn: true})
+
+      _ -> {:error, :wait_your_turn}
+    end
+  end
+
+  @doc """
+  Remove a player from the game.
+  """
+  def player_leave(%Game{} = game, %User{id: player_id}) do
+    case game do
+      %Game{player_one: %{id: ^player_id}} ->
+	update_game(game, %{player_one_present: false})
+
+      %Game{player_two: %{id: ^player_id}} ->
+	update_game(game, %{player_two_present: false})
+
+      _ -> {:error, :player_not_in_game}
     end
   end
 
@@ -108,11 +152,11 @@ defmodule ExChess.Games do
 
   ## Examples
 
-      iex> delete_game(game)
-      {:ok, %Game{}}
+  iex> delete_game(game)
+  {:ok, %Game{}}
 
-      iex> delete_game(game)
-      {:error, %Ecto.Changeset{}}
+  iex> delete_game(game)
+  {:error, %Ecto.Changeset{}}
 
   """
   def delete_game(%Game{} = game) do
