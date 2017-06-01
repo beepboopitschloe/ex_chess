@@ -1,7 +1,7 @@
 # ExChess
 
 A Phoenix server for playing live games of chess via algebraic chess
-notation.
+notation. [See it in action!](https://diplomat-robert-25142.netlify.com/#/login)
 
 ## Starting the server
 
