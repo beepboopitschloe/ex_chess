@@ -55,6 +55,11 @@ defmodule ExChess.Accounts do
   def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
+  Get a user by ID without errors.
+  """
+  def get_user(id), do: Repo.get(User, id)
+
+  @doc """
   Creates a user.
 
   ## Examples
