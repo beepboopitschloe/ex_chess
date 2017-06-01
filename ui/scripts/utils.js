@@ -14,11 +14,7 @@ _.cssLoader = config.cssModules ?
   'css-loader?-autoprefixer'
 
 _.cssProcessors = [
-  {loader: '', test: /\.css$/},
-  {loader: 'sass-loader?sourceMap', test: /\.scss$/},
-  {loader: 'less-loader?sourceMap', test: /\.less$/},
-  {loader: 'stylus-loader?sourceMap', test: /\.styl$/},
-  {loader: 'sass-loader?indentedSyntax&sourceMap', test: /\.sass$/},
+  {loader: '', test: /\.css$/}
 ]
 
 _.outputPath = config.electron ?
@@ -61,10 +57,6 @@ _.loadersOptions = () => {
         postcss: config.postcss,
         loaders: {
           css: generateLoader([]),
-          sass: generateLoader(['sass-loader?indentedSyntax&sourceMap']),
-          scss: generateLoader(['sass-loader?sourceMap']),
-          less: generateLoader(['less-loader?sourceMap']),
-          stylus: generateLoader(['stylus-loader?sourceMap']),
           js: 'babel-loader'
         }
       }

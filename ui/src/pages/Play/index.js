@@ -1,5 +1,5 @@
 import { mapActions, mapGetters } from 'vuex'
-import style from './style.scss'
+import style from './style.css'
 
 export default {
   name: 'Play',

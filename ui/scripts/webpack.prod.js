@@ -28,7 +28,9 @@ base.plugins.push(
   new ProgressPlugin(),
   new ExtractTextPlugin('styles.[contenthash:8].css'),
   new webpack.DefinePlugin({
-    'process.env.NODE_ENV': JSON.stringify('production')
+    'process.env.NODE_ENV': JSON.stringify('production'),
+    'process.env.API_URL': JSON.stringify(process.env.API_URL),
+    'process.env.SOCKET_URL': JSON.stringify(process.env.SOCKET_URL)
   }),
   new webpack.optimize.UglifyJsPlugin({
     sourceMap: true,

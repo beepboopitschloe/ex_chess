@@ -1,0 +1,17 @@
+.movesTable {
+  border-spacing: 0;
+  margin: 1em;
+}
+
+.movesTable th {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.movesTable td {
+  padding: 0.25em 0.5em;
+}
+
+.movesTable td:nth-child(1) {
+  border-right: 1px solid #e5e5e5;
+  color: grey;
+}
