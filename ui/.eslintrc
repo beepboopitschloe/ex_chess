@@ -1,0 +1,11 @@
+{
+  "extends": "vue",
+  "rules": {
+    "space-before-function-paren": 0,
+    "keyword-spacing": 0,
+    "object-curly-spacing": 0,
+    "jsx-quotes": ["error", "prefer-double"],
+    "unicorn/filename-case": ["error", { "case": "camelCase" }],
+    "import/no-named-as-default": 0
+  }
+}
