@@ -15,6 +15,8 @@ defmodule ExChess.Web.Router do
     post "/auth/signup", AuthController, :signup
     post "/auth/login", AuthController, :login
 
-    resources "/game", GameController, except: [:new, :edit]
+    get "/game", GameController, :index
+    get "/game/:id", GameController, :show
+    post "/game", GameController, :create
   end
 end
