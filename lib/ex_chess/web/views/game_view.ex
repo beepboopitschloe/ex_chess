@@ -22,6 +22,7 @@ defmodule ExChess.Web.GameView do
     %{"id" => game.id,
       "playerOne" => player_one,
       "playerTwo" => player_two,
+      "playerOneTurn" => game.player_one_turn,
       "status" => game.status,
       "moves" => game.moves}
   end
